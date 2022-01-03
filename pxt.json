@@ -1,0 +1,22 @@
+{
+    "name": "rpi-pico-ssd1306",
+    "description": "",
+    "dependencies": {
+        "rpi-pico": "*"
+    },
+    "files": [
+        "main.ts",
+        "README.md"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "targetVersions": {
+        "target": "0.15.51",
+        "targetId": "maker"
+    },
+    "supportedTargets": [
+        "maker"
+    ],
+    "preferredEditor": "tsprj"
+}
