@@ -1,6 +1,7 @@
 declare interface Math {
     floor(x: number): number;
 }
+//% weight=20 color=#0855AA icon="\uf081" block="SSD1306"
 namespace SSD1306 {
 
     let font: Buffer;
