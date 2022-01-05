@@ -1,7 +1,6 @@
 declare interface Math {
     floor(x: number): number;
 }
-
 namespace SSD1306 {
 
     let font: Buffer;
