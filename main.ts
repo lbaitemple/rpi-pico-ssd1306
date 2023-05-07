@@ -79,7 +79,6 @@ namespace SSD1306 {
     //% scl.defl=PIN_P1
     //% sda.defl=PIN_P0
     //% weight=9
-
     export function createI2C(scl: DigitalInOutPin, sda: DigitalInOutPin): void {
         _i2c = pins.createI2C(sda, scl);
     }
