@@ -1,7 +1,6 @@
 declare interface Math {
     floor(x: number): number;
 }
-//% weight=20 color=#0855AA icon="\uf109" block="SSD1306"
 namespace SSD1306 {
 
     let font: Buffer;
@@ -64,7 +63,7 @@ namespace SSD1306 {
             data[i] = 0x00
         }
         // send display buffer in 16 byte chunks
-        for (let i = 0; i < screenSize; i += 16) {
+        for (let j = 0; j < screenSize; j += 16) {
             //            pins.i2cWriteBuffer(chipAdress, data, false)
             _i2c.writeBuffer(chipAdress, data, false)
         }
@@ -76,8 +75,10 @@ namespace SSD1306 {
      * 
      */
     //% blockId=createI2C
-    //% block="create I2C at scl $scl and sda $sda "
-    //
+    //% block="create I2C at scl $scl and sda $sda"
+    //% scl.defl=PIN_P1
+    //% sda.defl=PIN_P0
+    //% weight=9
     export function createI2C(scl: DigitalInOutPin, sda: DigitalInOutPin): void {
         _i2c = pins.createI2C(sda, scl);
     }
@@ -91,25 +92,25 @@ namespace SSD1306 {
         command(displayHeight - 1)
         let col = 0
         let page = 0
-        let data = pins.createBuffer(17);
-        data[0] = 0x40; // Data Mode
-        let i = 1
-        for (let page = 0; page < displayHeight; page++) {
-            for (let col = 0; col < displayWidth; col++) {
-                if (page === 3 && col > 12 && col < displayWidth - 12) {
-                    data[i] = 0x60
-                } else if (page === 5 && col > 12 && col < displayWidth - 12) {
-                    data[i] = 0x06
-                } else if (page === 4 && (col === 12 || col === 13 || col === displayWidth - 12 || col === displayWidth - 13)) {
-                    data[i] = 0xFF
+        let data2 = pins.createBuffer(17);
+        data2[0] = 0x40; // Data Mode
+        let k = 1
+        for (let page2 = 0; page2 < displayHeight; page2++) {
+            for (let col2 = 0; col2 < displayWidth; col2++) {
+                if (page2 === 3 && col2 > 12 && col2 < displayWidth - 12) {
+                    data2[k] = 0x60
+                } else if (page2 === 5 && col2 > 12 && col2 < displayWidth - 12) {
+                    data2[k] = 0x06
+                } else if (page2 === 4 && (col2 === 12 || col2 === 13 || col2 === displayWidth - 12 || col2 === displayWidth - 13)) {
+                    data2[k] = 0xFF
                 } else {
-                    data[i] = 0x00
+                    data2[k] = 0x00
                 }
-                if (i === 16) {
-                    _i2c.writeBuffer(chipAdress, data, false)
-                    i = 1
+                if (k === 16) {
+                    _i2c.writeBuffer(chipAdress, data2, false)
+                    k = 1
                 } else {
-                    i++
+                    k++
                 }
 
             }
@@ -132,11 +133,11 @@ namespace SSD1306 {
         command(SSD1306_SETPAGEADRESS)
         command(4)
         command(5)
-        let data = pins.createBuffer(2);
-        data[0] = 0x40; // Data Mode
-        data[1] = 0x7E
-        for (let i = lastStart; i < width * (Math.floor(percent) / 100); i++) {
-            pins.i2cWriteBuffer(chipAdress, data, false)
+        let data3 = pins.createBuffer(2);
+        data3[0] = 0x40; // Data Mode
+        data3[1] = 0x7E
+        for (let l = lastStart; l < width * (Math.floor(percent) / 100); l++) {
+            pins.i2cWriteBuffer(chipAdress, data3, false)
         }
         loadPercent = num
     }
@@ -180,31 +181,31 @@ namespace SSD1306 {
         let y1 = displayHeight * 8
         let x2 = 0
         let y2 = 0
-        for (let i = 0; i < pixels.length; i++) {
-            if (pixels[i][0] < x1) {
-                x1 = pixels[i][0]
+        for (let m = 0; m < pixels.length; m++) {
+            if (pixels[m][0] < x1) {
+                x1 = pixels[m][0]
             }
-            if (pixels[i][0] > x2) {
-                x2 = pixels[i][0]
+            if (pixels[m][0] > x2) {
+                x2 = pixels[m][0]
             }
-            if (pixels[i][1] < y1) {
-                y1 = pixels[i][1]
+            if (pixels[m][1] < y1) {
+                y1 = pixels[m][1]
             }
-            if (pixels[i][1] > y2) {
-                y2 = pixels[i][1]
+            if (pixels[m][1] > y2) {
+                y2 = pixels[m][1]
             }
         }
         let page1 = Math.floor(y1 / 8)
-        let page2 = Math.floor(y2 / 8)
+        let page22 = Math.floor(y2 / 8)
         let line = pins.createBuffer(2)
         line[0] = 0x40
         for (let x = x1; x <= x2; x++) {
-            for (let page = page1; page <= page2; page++) {
+            for (let page3 = page1; page3 <= page22; page3++) {
                 line[1] = 0x00
-                for (let i = 0; i < pixels.length; i++) {
-                    if (pixels[i][0] === x) {
-                        if (Math.floor(pixels[i][1] / 8) === page) {
-                            line[1] |= Math.pow(2, (pixels[i][1] % 8))
+                for (let n = 0; n < pixels.length; n++) {
+                    if (pixels[n][0] === x) {
+                        if (Math.floor(pixels[n][1] / 8) === page3) {
+                            line[1] |= Math.pow(2, (pixels[n][1] % 8))
                         }
                     }
                 }
@@ -213,8 +214,8 @@ namespace SSD1306 {
                     command(x)
                     command(x + 1)
                     command(SSD1306_SETPAGEADRESS)
-                    command(page)
-                    command(page + 1)
+                    command(page3)
+                    command(page3 + 1)
                     //line[1] |= pins.i2cReadBuffer(chipAdress, 2)[1]
                     pins.i2cWriteBuffer(chipAdress, line, false)
                 }
@@ -230,16 +231,16 @@ namespace SSD1306 {
     //% weight=1
     export function drawLine(x0: number, y0: number, x1: number, y1: number) {
         let pixels: Array<Array<number>> = []
-        let kx: number, ky: number, c: number, i: number, xx: number, yy: number, dx: number, dy: number;
+        let kx: number, ky: number, c: number, o: number, xx: number, yy: number, dx: number, dy: number;
         let targetX = x1
         let targetY = y1
         x1 -= x0; kx = 0; if (x1 > 0) kx = +1; if (x1 < 0) { kx = -1; x1 = -x1; } x1++;
         y1 -= y0; ky = 0; if (y1 > 0) ky = +1; if (y1 < 0) { ky = -1; y1 = -y1; } y1++;
         if (x1 >= y1) {
             c = x1
-            for (i = 0; i < x1; i++, x0 += kx) {
+            for (o = 0; o < x1; o++, x0 += kx) {
                 pixels.push([x0, y0])
-                c -= y1; if (c <= 0) { if (i != x1 - 1) pixels.push([x0 + kx, y0]); c += x1; y0 += ky; if (i != x1 - 1) pixels.push([x0, y0]); }
+                c -= y1; if (c <= 0) { if (o != x1 - 1) pixels.push([x0 + kx, y0]); c += x1; y0 += ky; if (o != x1 - 1) pixels.push([x0, y0]); }
                 if (pixels.length > 20) {
                     drawShape(pixels)
                     pixels = []
@@ -249,9 +250,9 @@ namespace SSD1306 {
             }
         } else {
             c = y1
-            for (i = 0; i < y1; i++, y0 += ky) {
+            for (o = 0; o < y1; o++, y0 += ky) {
                 pixels.push([x0, y0])
-                c -= x1; if (c <= 0) { if (i != y1 - 1) pixels.push([x0, y0 + ky]); c += y1; x0 += kx; if (i != y1 - 1) pixels.push([x0, y0]); }
+                c -= x1; if (c <= 0) { if (o != y1 - 1) pixels.push([x0, y0 + ky]); c += y1; x0 += kx; if (o != y1 - 1) pixels.push([x0, y0]); }
                 if (pixels.length > 20) {
                     drawShape(pixels)
                     pixels = []
@@ -286,11 +287,11 @@ namespace SSD1306 {
     //% block="show (without newline) string $str"
     //% weight=6
     export function writeString(str: string) {
-        for (let i = 0; i < str.length; i++) {
+        for (let p = 0; p < str.length; p++) {
             if (charX > displayWidth - 6) {
                 newLine()
             }
-            drawChar(charX, charY, str.charAt(i))
+            drawChar(charX, charY, str.charAt(p))
             charX += 6
         }
     }
@@ -302,19 +303,19 @@ namespace SSD1306 {
         command(SSD1306_SETPAGEADRESS)
         command(y)
         command(y + 1)
-        let line = pins.createBuffer(2)
-        line[0] = 0x40
-        for (let i = 0; i < 6; i++) {
-            if (i === 5) {
-                line[1] = 0x00
+        let line2 = pins.createBuffer(2)
+        line2[0] = 0x40
+        for (let q = 0; q < 6; q++) {
+            if (q === 5) {
+                line2[1] = 0x00
             } else {
                 let charIndex = c.charCodeAt(0)
-                let charNumber = font.getNumber(NumberFormat.UInt8BE, 5 * charIndex + i)
-                line[1] = charNumber
+                let charNumber = font.getNumber(NumberFormat.UInt8BE, 5 * charIndex + q)
+                line2[1] = charNumber
 
             }
             //            pins.i2cWriteBuffer(chipAdress, line, false)
-            _i2c.writeBuffer(chipAdress, line, false)
+            _i2c.writeBuffer(chipAdress, line2, false)
         }
 
     }
@@ -327,7 +328,13 @@ namespace SSD1306 {
         command(SSD1306_SETDISPLAYCLOCKDIV);
         command(0x80);                                  // the suggested ratio 0x80
         command(SSD1306_SETMULTIPLEX);
-        command(0x3F);
+        // line 570 in Adafruit_SSD1306.cpp
+        if (height == 32){
+            command(0x1F);
+        }
+        else if (height == 64){
+            command(0x3F);
+        }
         command(SSD1306_SETDISPLAYOFFSET);
         command(0x0);                                   // no offset
         command(SSD1306_SETSTARTLINE | 0x0);            // line #0
@@ -337,10 +344,32 @@ namespace SSD1306 {
         command(0x00);                                  // 0x0 act like ks0108
         command(SSD1306_SEGREMAP | 0x1);
         command(SSD1306_COMSCANDEC);
-        command(SSD1306_SETCOMPINS);
-        command(0x12);
-        command(SSD1306_SETCONTRAST);
-        command(0xCF);
+        displayWidth = width
+        displayHeight = height / 8
+
+        if (width == 128 && height ==32){
+            // https://github.com/adafruit/Adafruit_SSD1306/blob/master/Adafruit_SSD1306.cpp
+            // line 589-591
+            command(SSD1306_SETCOMPINS);
+            command(0x02);
+            command(SSD1306_SETCONTRAST);
+            command(0x8F);
+        }
+        else if (width == 128 && height == 64){
+            // https://github.com/adafruit/Adafruit_SSD1306/blob/master/Adafruit_SSD1306.cpp
+            // line 592-594
+            command(SSD1306_SETCOMPINS);
+            command(0x12);
+            command(SSD1306_SETCONTRAST);
+            command(0xCF);
+        } else{
+            command(SSD1306_SETCOMPINS);
+            command(0x02);
+            command(SSD1306_SETCONTRAST);
+            command(0xAF);
+        }
+
+
         command(SSD1306_SETPRECHARGE);
         command(0xF1);
         command(SSD1306_SETVCOMDETECT);
@@ -348,8 +377,7 @@ namespace SSD1306 {
         command(SSD1306_DISPLAYALLON_RESUME);
         command(SSD1306_NORMALDISPLAY);
         command(SSD1306_DISPLAYON);
-        displayWidth = width
-        displayHeight = height / 8
+
         screenSize = displayWidth * displayHeight
         charX = xOffset
         charY = yOffset
