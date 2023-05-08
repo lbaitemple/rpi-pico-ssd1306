@@ -1,6 +1,6 @@
 {
     "name": "rpi-pico-ssd1306",
-    "version": "0.0.2",
+    "version": "0.0.1",
     "description": "",
     "dependencies": {
         "rpi-pico": "*"
@@ -14,7 +14,7 @@
         "test.ts"
     ],
     "targetVersions": {
-        "target": "0.15.66",
+        "target": "0.15.51",
         "targetId": "maker"
     },
     "supportedTargets": [
